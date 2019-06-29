@@ -25,12 +25,23 @@ const styles = {
         height: '37px',
         marginTop: '70px'
     },
-    container: {
+    leftPanel: {
         position: 'absolute',
         width: '384px',
         marginLeft: '0px',
         marginTop: '0px',
         background: '#070D59'
+    },
+    rightPanel: {
+        position: 'absolute',
+        marginTop: '50px',
+        width: '634px',
+        height: '650px',
+        marginLeft: '463.16px',
+        background: '#FFFFFF',
+        border: '10px solid #FF0000',
+        boxSizing: 'border-box',
+        overflow: 'scroll'
     }
 }
 
@@ -49,40 +60,54 @@ class Layout extends Component {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function () {
-            const newDoc = { name: file.name, data: reader.result}
-          self.setState({
-              documents: self.state.documents.concat(newDoc)
-          })
+            const newDoc = { name: file.name, data: reader.result }
+            self.decodeBase64(reader.result)
+            // console.log(reader)
+            self.setState({
+                documents: self.state.documents.concat(newDoc)
+            })
         };
         reader.onerror = function (error) {
-          console.log('Error: ', error);
+            console.log('Error: ', error);
         };
-     }
+    }
 
-     handleUpload(file){
-         this.getBase64(file)
+    handleUpload(file) {
+        this.getBase64(file)
         console.log(file.name);
-     }
-     
+    }
+
+    decodeBase64(b64) {
+        b64 = b64.replace(/^[^,]+,/, '');
+        b64 = b64.replace(/\s/g, '');
+        var obj = document.createElement('object');
+        obj.style.width = '100%';
+        obj.style.height = '100%';
+        obj.type = 'application/pdf';
+        obj.data = 'data:application/pdf;base64,' + b64;
+        document.getElementById('pdf').appendChild(obj);
+    }
+
     render() {
-        console.log(this.state.documents)
         return (
             <React.Fragment>
                 <CssBaseline />
-                <Container component="div" style={styles.container}>
+                <Container component="div" style={styles.leftPanel}>
                     <img src={require('../../src/resources/logo_sm_white.png')} style={styles.image}></img>
                     <input
                         accept="application/pdf"
                         style={{ display: 'none' }}
                         id="raised-button-file"
                         type="file"
-                        onChange={ (e) => this.handleUpload(e.target.files[0]) }
+                        onChange={(e) => this.handleUpload(e.target.files[0])}
                     />
                     <label htmlFor="raised-button-file">
-                    <Button variant="raised" component="span" style={styles.uploadButton}>
-                        <i class="fa fa-cloud-upload" aria-hidden="true"> Upload files </i>
-                    </Button>
+                        <Button variant="raised" component="span" style={styles.uploadButton}>
+                            <i className="fa fa-cloud-upload" aria-hidden="true"> Upload files </i>
+                        </Button>
                     </label>
+                </Container>
+                <Container id="pdf" style={styles.rightPanel}>
                 </Container>
             </React.Fragment>
         );
