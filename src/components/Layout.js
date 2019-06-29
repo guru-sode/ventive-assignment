@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 
 const styles = {
-    uploadButton : {
+    uploadButton: {
         width: '305px',
         height: '70px',
         marginTop: '525px',
@@ -19,27 +19,49 @@ const styles = {
         fontSize: '22px',
         lineHeight: '33px',
         color: '#FFFFFF'
+    },
+    image: {
+        width: '208px',
+        height: '37px',
+        marginTop: '70px'
+    },
+    container: {
+        position: 'absolute',
+        width: '384px',
+        marginLeft: '0px',
+        marginTop: '0px',
+        background: '#070D59'
     }
 }
 
 class Layout extends Component {
     constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
 
-         };
+        };
     }
     render() {
         return (
             <React.Fragment>
-            <CssBaseline />
-            <Container component="div" style={{ position: 'absolute',width: '384px',marginLeft: '0px',marginTop: '0px',background: '#070D59' }}>
-                <img src={require('../../src/resources/logo_sm_white.png')} style={{width: '208px',height: '37px',marginTop: '70px'}}></img>
-                <Button style={styles.uploadButton}>
-        Upload files
-      </Button>
-            </Container>
-          </React.Fragment>
+                <CssBaseline />
+                <Container component="div" style={styles.container}>
+                    <img src={require('../../src/resources/logo_sm_white.png')} style={styles.image}></img>
+                    <input
+                        accept="application/pdf"
+                        // className={classes.input}
+                        style={{ display: 'none' }}
+                        id="raised-button-file"
+                        multiple
+                        type="file"
+                    />
+                    <label htmlFor="raised-button-file">
+                    <Button variant="raised" component="span" style={styles.uploadButton}>
+                        <i class="fa fa-cloud-upload" aria-hidden="true"> Upload files </i>
+                    </Button>
+                    </label>
+                </Container>
+            </React.Fragment>
         );
     }
 }
