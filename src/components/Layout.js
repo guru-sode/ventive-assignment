@@ -38,10 +38,34 @@ class Layout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            documents: []
         };
+        this.handleUpload = this.handleUpload.bind(this);
+        this.getBase64 = this.getBase64.bind(this);
     }
+
+    getBase64(file) {
+        const self = this;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            const newDoc = { name: file.name, data: reader.result}
+          self.setState({
+              documents: self.state.documents.concat(newDoc)
+          })
+        };
+        reader.onerror = function (error) {
+          console.log('Error: ', error);
+        };
+     }
+
+     handleUpload(file){
+         this.getBase64(file)
+        console.log(file.name);
+     }
+     
     render() {
+        console.log(this.state.documents)
         return (
             <React.Fragment>
                 <CssBaseline />
@@ -49,11 +73,10 @@ class Layout extends Component {
                     <img src={require('../../src/resources/logo_sm_white.png')} style={styles.image}></img>
                     <input
                         accept="application/pdf"
-                        // className={classes.input}
                         style={{ display: 'none' }}
                         id="raised-button-file"
-                        multiple
                         type="file"
+                        onChange={ (e) => this.handleUpload(e.target.files[0]) }
                     />
                     <label htmlFor="raised-button-file">
                     <Button variant="raised" component="span" style={styles.uploadButton}>
