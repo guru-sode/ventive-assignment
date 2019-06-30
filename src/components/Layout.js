@@ -5,16 +5,17 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import Grid from '@material-ui/core/Grid';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import $ from 'jquery';
-// import InboxIcon from '@material-ui/icons/Inbox';
 
 const styles = {
     uploadButton: {
-        width: '305px',
-        height: '70px',
-        // marginTop: '500px',
+        width: '100%',
+        height: '10%',
+        marginTop: '625px',
+        marginLeft: '40px',
         marginBottom: '15px',
         background: '#F7B633',
         boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
@@ -37,7 +38,8 @@ const styles = {
         height: '100vh',
         marginLeft: '0px',
         marginTop: '0px',
-        background: '#070D59'
+        background: '#070D59',
+        overflow: 'scroll'
     },
     rightPanel: {
         position: 'absolute',
@@ -66,6 +68,26 @@ const styles = {
         fontSize: '22px',
         lineHeight: '31px',
         color: '#FFFFFF'
+    },
+    header: {
+        // position: 'absolute',
+        fontFamily: 'Poppins',
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: '36px',
+        lineHeight: '54px',
+        display: 'flex',
+        alignItems: 'center',
+        color: '#2D1F3F',
+        width: '757px',
+        height: '41px',
+        marginLeft: '529px',
+        marginTop: '10px',
+        overflow: 'hidden'
+    },
+    grid: {
+        background: '#000000',
+        opacity: '0.8'
     }
 }
 
@@ -73,7 +95,8 @@ class Layout extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            documents: []
+            documents: [],
+            selectedDoc: ''
         };
         this.handleUpload = this.handleUpload.bind(this);
         this.getBase64 = this.getBase64.bind(this);
@@ -82,24 +105,25 @@ class Layout extends Component {
     }
 
     getBase64(file) {
-        const self = this;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            const newDoc = { name: file.name, data: reader.result }
-            self.decodeBase64(reader.result)
-            self.setState({
-                documents: self.state.documents.concat(newDoc)
-            })
-        };
-        reader.onerror = function (error) {
-            console.log('Error: ', error);
-        };
+        if(file){
+            const self = this;
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                const newDoc = { name: file.name, data: reader.result }
+                self.decodeBase64(reader.result)
+                self.setState({
+                    documents: self.state.documents.concat(newDoc)
+                })
+            };
+            reader.onerror = function (error) {
+                console.log('Error: ', error);
+            };
+        }
     }
 
     handleUpload(file) {
         this.getBase64(file)
-        console.log(file.name);
     }
 
     decodeBase64(b64) {
@@ -117,6 +141,9 @@ class Layout extends Component {
     }
 
     handleListClick(document){
+        this.setState({
+            selectedDoc: document.name
+        })
         this.decodeBase64(document.data)
     }
 
@@ -134,9 +161,9 @@ class Layout extends Component {
 
     render() {
         return (
-            <React.Fragment>
+            <Grid container spacing={3}>
                 <CssBaseline />
-                <Container component="div" style={styles.leftPanel}>
+                <Grid item xs={5} style={styles.leftPanel}>
                     <img src={require('../../src/resources/logo_sm_white.png')} style={styles.image}></img>
                     <input
                         accept="application/pdf"
@@ -146,15 +173,17 @@ class Layout extends Component {
                         onChange={(e) => this.handleUpload(e.target.files[0])}
                     />
                     {this.renderDocuments()}
+                    </Grid>
+                    <Grid>
                     <label htmlFor="raised-button-file">
                         <Button variant="raised" component="span" style={styles.uploadButton}>
                             <i className="fa fa-cloud-upload" aria-hidden="true"> Upload files </i>
                         </Button>
                     </label>
-                </Container>
-                <Container id="pdf" style={styles.rightPanel}>
-                </Container>
-            </React.Fragment>
+                </Grid>
+                <Grid item xs={7} id="pdf" style={styles.rightPanel}>
+                </Grid>
+            </Grid>
         );
     }
 }
